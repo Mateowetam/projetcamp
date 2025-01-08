@@ -1,0 +1,53 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <title>Camp</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    
+
+  </head>
+  <body>
+    <p>Camp <strong>EEUdF</strong> pas officiel, mais avec une <strong>carte</strong> des lieux de camp.</p>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <link href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" rel="stylesheet"/>
+    
+    <div id="map"></div>
+
+
+    <script>
+      var element = document.getElementById('map');
+      var map = L.map(element);
+
+      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      var target = L.latLng('47.008209', '2.362076');
+      map.setView(target, 6);
+      // L.marker(target).addTo(map);
+
+      var points = [
+        {% for lieu in points %}
+          {
+            "latitude": "{{ lieu.latitude }}",
+            "longitude": "{{ lieu.longitude }}",
+            "lien": "{{ lieu.lien }}"
+          },
+        {% endfor %}
+      ];
+
+      points.forEach(function(point) {
+        var lat = parseFloat(point.latitude);
+        var lon = parseFloat(point.longitude);
+
+        var marker = L.marker([lat, lon]).addTo(map);
+
+        marker.bindPopup("<a href='" + point.lien + "' target='_blank'>" + point.lien + "</a>");
+      });
+
+    </script>
+
+  </body>
+</html>
